@@ -7,7 +7,7 @@ Introduction
 
 In this project you will parse files from the Internet Movie Database (IMDB) dataset into a graph, and also create a "search engine" to find **shortest paths** between any pair of nodes in any graph (which could be IMDB data but could also be any other graph). Using this infrastructure that you build, the user can find shortest paths between any two actors (see the "Actor 1" and "Actor 2" in the lower-right of the figure below, where the user is prompted to enter the actors for which a shortest path should be found).
 
-![Interaction.png](/courses/39079/files/5102594/preview)
+![Interaction.png](../Images/Interaction.png)
 
 Parsing the IMDB data
 =====================
@@ -47,7 +47,7 @@ Goal: A Graph of IMDB Actors and Movies
 ---------------------------------------
 
 After parsing the IMDB data files, you should end up with a graph whose nodes/vertices are the actors & actresses as well as the movies, and whose edges represent who acted in which movies. Below is an example (note that the actors and titles shown in the image below might not match exactly the IMDB data):  
-![IMDBGraph.png](/courses/39079/files/5102606/preview)  
+![IMDBGraph.png](../Images/IMDBGraph.png)  
 Here, Tom Cruise acted in _Top Gun: Maverick_, and so did Jennifer Connelly. (He also acted in some other movies, but they are not shown.) Jennifer Connelly also acted in _Requiem for a Dream_ (which is sad but worth watching), and so did Marlon Wayans. The nodes in the graph will be represented in your code as IMDBNode objects, and the edges between them are represented using the collection of \_neighbors in each node.
 
 Keeping the memory usage tractable

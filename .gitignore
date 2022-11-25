@@ -1,0 +1,9 @@
+# ignore ALL .log files
+*.log
+*.gz
+*.iml
+
+# ignore ALL files in ANY directory named temp
+temp/ 
+out/
+.idea/

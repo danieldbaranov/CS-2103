@@ -139,4 +139,8 @@ public class Particle {
 
 		return t;
 	}
+
+	public double getlastUpdateTime () {
+		return _lastUpdateTime;
+	}
 }

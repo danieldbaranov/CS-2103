@@ -47,7 +47,7 @@ public class ParticleSimulator extends JPanel {
 	// Helper class to signify the final event of the simulation.
 	private class TerminationEvent extends Event {
 		TerminationEvent (double timeOfEvent) {
-			super(timeOfEvent, 0);
+			super(timeOfEvent, 0, null, null);
 		}
 	}
 
@@ -70,9 +70,13 @@ public class ParticleSimulator extends JPanel {
 		// collisions between all the particles and each other,
 		// and all the particles and the walls.
 		for (Particle p : _particles) {
-			// Add new events.
+			for (Particle pi : _particles){
+				if(!p.equals(pi)){
+					_events.add(new Event(p.getCollisionTime(pi), lastTime, p, pi));
+				}
+			}
 		}
-		
+
 		_events.add(new TerminationEvent(_duration));
 		while (_events.size() > 0) {
 			Event event = _events.removeFirst();
@@ -84,9 +88,9 @@ public class ParticleSimulator extends JPanel {
 			}
 
 			// Check if event still valid; if not, then skip this event
-			// if (event not valid) {
-			//   continue;
-			// }
+			if (event._timeEventCreated > event._mainParticle.getlastUpdateTime()) {
+			   continue;
+			 }
 
 
 			// Since the event is valid, then pause the simulation for the right
@@ -104,7 +108,21 @@ public class ParticleSimulator extends JPanel {
 			// (either for a particle-wall collision or a particle-particle collision).
 			// You should call the Particle.updateAfterCollision method at some point.
 
+			event._mainParticle.updateAfterCollision(event._timeOfEvent, event._otherParticle);
+			//event._otherParticle.updateAfterCollision(event._timeOfEvent, event._mainParticle);
+
 			// Enqueue new events for the particle(s) that were involved in this event.
+
+			for (Particle p : _particles){
+				if(p.equals(event._mainParticle)){
+					_events.add(new Event(event._mainParticle.getCollisionTime(p), event._timeOfEvent, event._mainParticle, p));
+				}
+			}
+			for (Particle p : _particles){
+				if(p.equals(event._otherParticle)){
+					_events.add(new Event(event._otherParticle.getCollisionTime(p), event._timeOfEvent, event._otherParticle, p));
+				}
+			}
 
 			// Update the time of our simulation
 			lastTime = event._timeOfEvent;

@@ -4,14 +4,19 @@
 public class Event implements Comparable<Event> {
 	double _timeOfEvent;
 	double _timeEventCreated;
+	Particle _mainParticle;
+	Particle _otherParticle;
 
 	/**
 	 * @param timeOfEvent the time when the collision will take place
 	 * @param timeEventCreated the time when the event was first instantiated and added to the queue
 	 */
-	public Event (double timeOfEvent, double timeEventCreated) {
+	public Event (double timeOfEvent, double timeEventCreated, Particle mainParticle, Particle otherParticle) {
 		_timeOfEvent = timeOfEvent;
 		_timeEventCreated = timeEventCreated;
+		_mainParticle = mainParticle;
+		_otherParticle = otherParticle;
+
 	}
 
 	@Override

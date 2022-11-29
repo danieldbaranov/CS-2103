@@ -28,6 +28,7 @@ public class HeapTester {
 		}
 		assertEquals(N, heap.size());
 		for (int i = N-1; i >= 0; i--) {
+			System.out.println(i);
 			assertEquals((Integer) i, heap.removeFirst());
 		}
 		assertEquals(0, heap.size());

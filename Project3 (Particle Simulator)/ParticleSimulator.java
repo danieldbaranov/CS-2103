@@ -10,6 +10,7 @@ public class ParticleSimulator extends JPanel {
 	private java.util.List<Particle> _particles;
 	private double _duration;
 	private int _width;
+	final private Particle wall = new Particle("wall", 0, 0, 0, 0, 0);
 
 	/**
 	 * @param filename the name of the file to parse containing the particles
@@ -70,11 +71,8 @@ public class ParticleSimulator extends JPanel {
 		// collisions between all the particles and each other,
 		// and all the particles and the walls.
 		for (Particle p : _particles) {
-			for (Particle pi : _particles){
-				if(!p.equals(pi)){
-					_events.add(new Event(p.getCollisionTime(pi), lastTime, p, pi));
-				}
-			}
+			addParticleCollisionTimeEvent(p, lastTime);
+			addWallCollisionTimeEvent(p, lastTime);
 		}
 
 		_events.add(new TerminationEvent(_duration));
@@ -88,7 +86,7 @@ public class ParticleSimulator extends JPanel {
 			}
 
 			// Check if event still valid; if not, then skip this event
-			if (event._timeEventCreated > event._mainParticle.getlastUpdateTime()) {
+			if (event._timeEventCreated > event._mainParticle.getlastUpdateTime() || event._timeEventCreated > event._otherParticle.getlastUpdateTime()) {
 			   continue;
 			 }
 
@@ -108,21 +106,15 @@ public class ParticleSimulator extends JPanel {
 			// (either for a particle-wall collision or a particle-particle collision).
 			// You should call the Particle.updateAfterCollision method at some point.
 
-			event._mainParticle.updateAfterCollision(event._timeOfEvent, event._otherParticle);
+			event._mainParticle.updateAfterCollision(event._timeOfEvent, event._otherParticle, _width);
 			//event._otherParticle.updateAfterCollision(event._timeOfEvent, event._mainParticle);
 
 			// Enqueue new events for the particle(s) that were involved in this event.
 
-			for (Particle p : _particles){
-				if(p.equals(event._mainParticle)){
-					_events.add(new Event(event._mainParticle.getCollisionTime(p), event._timeOfEvent, event._mainParticle, p));
-				}
-			}
-			for (Particle p : _particles){
-				if(p.equals(event._otherParticle)){
-					_events.add(new Event(event._otherParticle.getCollisionTime(p), event._timeOfEvent, event._otherParticle, p));
-				}
-			}
+			addParticleCollisionTimeEvent(event._mainParticle, event._timeOfEvent);
+			addParticleCollisionTimeEvent(event._otherParticle, event._timeOfEvent);
+			addWallCollisionTimeEvent(event._mainParticle, event._timeOfEvent);
+			addWallCollisionTimeEvent(event._otherParticle, event._timeOfEvent);
 
 			// Update the time of our simulation
 			lastTime = event._timeOfEvent;
@@ -138,6 +130,33 @@ public class ParticleSimulator extends JPanel {
 		System.out.println(_duration);
 		for (Particle p : _particles) {
 			System.out.println(p);
+		}
+
+
+	}
+
+	private void addParticleCollisionTimeEvent(Particle mainParticle, double currentTime) {
+		for (Particle p : _particles){
+			if(!p.equals(mainParticle) && mainParticle.getCollisionTime(p) < Double.POSITIVE_INFINITY){
+				_events.add(new Event(mainParticle.getCollisionTime(p) + currentTime, currentTime, mainParticle, p));
+			}
+		}
+	}
+
+	private void addWallCollisionTimeEvent(Particle p, double currentTime){
+		Particle Yaxis = new Particle("Yaxis", 0, 0, 0, 0, 0);
+		Particle Xaxis = new Particle("Xaxis", 0, 0, 0, 0, 0);
+
+		if(p.getVX() > 0){ // Right Wall
+			_events.add(new Event(p.getCollisionTimeTilWall(_width, "right"), currentTime, p, Xaxis));
+		} else if (p.getVX() < 0){ // Left Wall
+			_events.add(new Event(p.getCollisionTimeTilWall(_width, "left"), currentTime, p, Xaxis));
+		}
+
+		if(p.getVY() > 0){ // Bottom Wall
+			_events.add(new Event(p.getCollisionTimeTilWall(_width, "bottom"), currentTime, p, Yaxis));
+		} else if (p.getVY() < 0){ // Top Wall
+			_events.add(new Event(p.getCollisionTimeTilWall(_width, "top"), currentTime, p, Yaxis));
 		}
 	}
 

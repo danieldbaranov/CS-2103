@@ -72,7 +72,15 @@ public class Particle {
 	 * @param now the current time in the simulation
 	 * @param other the particle that this one collided with
 	 */
-	public void updateAfterCollision (double now, Particle other) {
+	public void updateAfterCollision (double now, Particle other, int width) {
+		if(other.getName().equals("Yaxis")){
+			_vy *= -1;
+			return;
+		} else if (other.getName().equals("Xaxis")){
+			_vx *= -1;
+			return;
+		}
+
 		double vxPrime, vyPrime;
 		double otherVxPrime, otherVyPrime;
 		double common = ((_vx - other._vx) * (_x - other._x) + 
@@ -90,6 +98,8 @@ public class Particle {
 
 		_lastUpdateTime = now;
 		other._lastUpdateTime = now;
+
+
 	}
 
 	/**
@@ -140,7 +150,39 @@ public class Particle {
 		return t;
 	}
 
+	public double getCollisionTimeTilWall (int width, String state) {
+		double TopWallYVal = _radius;
+		double BottomWallYVal = width - _radius;
+		double leftWallXVal = _radius;
+		double rightWallXVal = width - _radius;
+
+		if(state.equals("right")){
+			return Math.abs((rightWallXVal - _x) / _vx);
+		} else if (state.equals("left")){
+			return Math.abs((leftWallXVal - _x) / _vx);
+		} else if (state.equals("bottom")){
+			return Math.abs((_y - BottomWallYVal) / _vy);
+		} else if (state.equals("top")){
+			return Math.abs((_y - TopWallYVal) / _vy);
+		} else {
+			System.out.println("Unexpected wall state");
+			return 0;
+		}
+	}
+
 	public double getlastUpdateTime () {
 		return _lastUpdateTime;
+	}
+
+	public String getName(){
+		return _name;
+	}
+
+	public double getVX () {
+		return _vx;
+	}
+
+	public double getVY () {
+		return _vy;
 	}
 }
